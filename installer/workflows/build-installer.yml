@@ -1,14 +1,14 @@
-# Place this file at .github/workflows/build-installer.yml to enable GitHub
-# cloud builds. (GitHub only lets workflow files be added from your own
-# account: push it yourself, or create it via Repo → Actions → New workflow
-# → paste this content.)
+name: Build Installer
+
+# Canonical copy lives at .github/workflows/build-installer.yml
+# This file under installer/workflows/ is a backup/reference that
+# gets mirrored to .github/workflows/. If you forked before that folder
+# existed, you can manually copy this file to .github/workflows/ and push.
 #
-# Why bother: you get the EXE without installing ANYTHING on your PC —
-# go to Actions → "Build Installer" → Run workflow → download
+# What it does: builds the Windows EXE without needing anything on your PC —
+# go to your repo → Actions → "Build Installer" → Run workflow → download
 # "Diorite-Setup-Windows" from the run's Artifacts.
 # Pushing a tag like v1.0.0 also attaches the EXE to a GitHub Release.
-
-name: Build Installer
 
 on:
   workflow_dispatch:
@@ -16,28 +16,36 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   windows:
     name: Windows EXE installer
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Build the one-click installer
         run: npm run make:exe
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
         with:
           name: Diorite-Setup-Windows
           path: dist/installer/*.exe
+          if-no-files-found: error
           retention-days: 90
 
       - name: Publish GitHub Release

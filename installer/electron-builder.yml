@@ -2,13 +2,17 @@ appId: com.diorite.ide
 productName: Diorite
 copyright: Copyright © 2026 Diorite
 
+# Output lives at repo root dist/installer (relative to this file)
 directories:
   output: ../dist/installer
   buildResources: ../assets
 
-# App code (compiled electron main + built frontend, packed into asar)
+# We run electron-builder from electron/ dir with --config ../installer/electron-builder.yml
+# so app detection uses electron/package.json. These file globs are relative to that
+# project. We include both the compiled electron dist and the already-built frontend
+# + assets so the packaged app is self-contained.
 files:
-  - ../electron/dist/**/*
+  - dist/**/*
   - ../frontend/dist/**/*
   - ../assets/**/*
   - package.json
@@ -20,7 +24,7 @@ extraResources:
     to: backend
     filter:
       - "**/*"
-  # Frontend served from disk in packaged app
+  # Frontend served from disk in packaged app (fallback / extra copy)
   - from: ../frontend/dist
     to: frontend/dist
     filter:
@@ -62,5 +66,3 @@ linux:
   category: Development
 
 publish: null
-
-# Auto updates disabled for now
