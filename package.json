@@ -14,7 +14,8 @@
     "build:frontend": "cd frontend && npm install && npm run build",
     "build:electron": "cd electron && npm install && npm run build",
     "build": "npm run build:frontend && npm run build:electron",
-    "build:installer": "npm run build && cd installer && npx electron-builder --config electron-builder.yml",
+    "make:exe": "node scripts/build-installer.js",
+    "build:installer": "npm run make:exe",
     "start": "cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 7331",
     "test:backend": "cd backend && python -m pytest -q || python -c \"from app.services.template_service import TemplateService; print('Templates:', TemplateService().list_templates())\""
   },

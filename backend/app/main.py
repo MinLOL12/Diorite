@@ -109,6 +109,16 @@ async def websocket_global(websocket: WebSocket):
         await manager.disconnect(websocket, channel)
 
 if __name__ == "__main__":
+    import multiprocessing
+    import sys
+
     import uvicorn
+
+    multiprocessing.freeze_support()
     port = int(os.getenv("DIORITE_PORT", "7331"))
-    uvicorn.run("app.main:app", host="127.0.0.1", port=port, reload=True)
+    frozen = getattr(sys, "frozen", False)
+    # reload spawns child processes — only sensible in source checkouts
+    if frozen:
+        uvicorn.run(app, host="127.0.0.1", port=port, log_level="info")
+    else:
+        uvicorn.run("app.main:app", host="127.0.0.1", port=port, reload=True)

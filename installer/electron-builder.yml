@@ -6,20 +6,21 @@ directories:
   output: ../dist/installer
   buildResources: ../assets
 
+# App code (compiled electron main + built frontend, packed into asar)
 files:
   - ../electron/dist/**/*
   - ../frontend/dist/**/*
-  - ../backend/**/*
-  - !../backend/__pycache__/**/*
-  - !**/*.pyc
   - ../assets/**/*
   - package.json
 
+# Runtimes shipped next to the app (not in asar so they can be executed)
 extraResources:
-  - from: ../backend
+  # Frozen backend exe (PyInstaller) — users need NO Python installed
+  - from: ../backend/dist/diorite-backend
     to: backend
     filter:
       - "**/*"
+  # Frontend served from disk in packaged app
   - from: ../frontend/dist
     to: frontend/dist
     filter:
@@ -33,15 +34,17 @@ win:
   publisherName: Diorite Team
 
 nsis:
-  oneClick: false
-  allowToChangeInstallationDirectory: true
+  # ONE-CLICK installer: double-click EXE → installs → done. No wizard steps.
+  oneClick: true
+  perMachine: false
+  allowToChangeInstallationDirectory: false
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: Diorite IDE
+  shortcutName: Diorite
+  runAfterFinish: true
   installerIcon: ../assets/icons/icon.ico
   uninstallerIcon: ../assets/icons/icon.ico
   installerHeaderIcon: ../assets/icons/icon.ico
-  include: build/installer.nsh
   artifactName: Diorite-Setup-${version}-${arch}.${ext}
 
 mac:

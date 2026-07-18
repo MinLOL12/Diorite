@@ -43,7 +43,7 @@ Modular services, each in `backend/app/services/`:
 - `AIChatPanel` (project-aware, shows context used)
 - `NewProjectModal` (loader + MC version selector, templates preview, cache hint)
 
-**Electron:** `electron/src/main.ts` spawns backend (Python) and serves frontend. Packaging via `electron-builder` NSIS for EXE installer.
+**Electron:** `electron/src/main.ts` launches the backend and serves the frontend. The backend is **frozen into a single exe with PyInstaller** (`npm run make:exe` → `backend/dist/diorite-backend/…`), so the packaged app is fully self-contained — no Python on the user's PC. Packaging via `electron-builder` produces the one-click NSIS EXE installer.
 
 ---
 
@@ -93,26 +93,24 @@ Generates Java files, JSON models, blockstates, registrations — convenience on
 
 ---
 
-## 📦 Installer (EXE)
+## 📦 Installer (EXE) — one file for you, one file for users
 
-Builds an EXE installer users can run:
+### Get/make the installer (pick ONE — all produce the same EXE)
 
-```bash
-# Build everything then NSIS installer
-node scripts/build-installer.js
+| Way | How | What you need installed |
+|-----|-----|-------------------------|
+| **GitHub button** (easiest) | One-time: copy `installer/workflows/build-installer.yml` to `.github/workflows/` and push. Then: Repo → **Actions** → *Build Installer* → **Run workflow** → download `Diorite-Setup-Windows` from Artifacts | **Nothing** |
+| **Double-click** | `Build-Diorite-Installer.bat` (repo root) | Node 20+, Python 3.11+ |
+| **Terminal** | `npm run make:exe` | Node 20+, Python 3.11+ |
 
-# Or manually:
-npm run build:installer
-# Output: dist/installer/Diorite-Setup-0.1.0-x64.exe
-```
+Output: `dist/installer/Diorite-Setup-<version>-x64.exe` — that ONE file is all you ever share. Push a tag like `v1.0.0` and GitHub automatically attaches it to a Release.
 
-What installer does:
-- Installs Electron app + embedded backend + frontend
-- NSIS: choose dir, desktop shortcut, start menu
-- Creates `%APPDATA%\Diorite` with cache structure
-- User runs EXE → zero setup, same flow.
+### What a user does with it — two double-clicks, zero tools
 
-For Windows cross-build on Linux, use Wine or build on Windows host. The config in `installer/electron-builder.yml` targets NSIS x64, DMG for macOS, AppImage for Linux.
+1. Double-click `Diorite-Setup-*.exe` → installs itself (**one-click**, no wizard questions), desktop + Start Menu shortcut appears.
+2. Double-click the **Diorite** shortcut → app opens.
+
+The backend ships **frozen inside the app** (PyInstaller), the frontend is embedded, and the app downloads its own JDK/Gradle into `%APPDATA%\Diorite` on first use — so end users need **no Python, Node, JDK, or Gradle**. Non-Windows builds (mac DMG, Linux AppImage) use the same `npm run make:exe` on the matching OS.
 
 ---
 
@@ -167,15 +165,20 @@ Diorite/
 │  │  ├─ services/{project,file,build,process_manager,cache,template,ai_context,settings,scaffold}_service.py
 │  │  └─ api/routes/{projects,files,builds,processes,cache,templates,ai,scaffolds,settings}.py
 │  └─ templates/ (auto-generated Fabric/NeoForge/Forge builtins with {{MOD_ID}} tokens)
+│  ├─ run_backend.py (entry — used by PyInstaller)
+│  ├─ diorite-backend.spec (freezes backend to ONE exe)
 ├─ frontend/
 │  ├─ src/{App, main, components/{TopBar,PlayButton,ProjectExplorer,Editor,Terminal,ScaffoldMenu,AIChatPanel,NewProjectModal,StatusBar,Sidebar}, api/client, stores/{projectStore,editorStore}, hooks/useWebSocket}
 │  └─ vite.config.ts (proxies /api and /ws to :7331)
 ├─ electron/
 │  ├─ src/{main.ts (spawns backend), preload.ts}
 │  └─ package.json
-├─ installer/electron-builder.yml (NSIS EXE, DMG, AppImage)
+├─ installer/electron-builder.yml (ONE-CLICK NSIS EXE, DMG, AppImage)
 ├─ assets/{logo.svg, logo.png, icons/{icon.png, icon.ico, icon-256.png}}
-├─ scripts/{build-installer.js, run-dev.js}
+├─ scripts/{build-installer.js, run-dev.js, install.bat, install.sh}
+├─ Build-Diorite-Installer.bat (ONE double-click → EXE)
+├─ build-installer.sh (macOS/Linux equivalent)
+├─ installer/workflows/build-installer.yml (copy to .github/workflows/ → cloud build, EXE as download)
 └─ README.md
 ```
 
