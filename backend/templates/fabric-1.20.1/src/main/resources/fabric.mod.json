@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "{{MOD_ID}}",
+  "version": "${version}",
+  "name": "{{MOD_NAME}}",
+  "description": "A mod created with Diorite - zero-setup Minecraft IDE",
+  "authors": [
+    "Diorite User"
+  ],
+  "contact": {
+    "homepage": "https://github.com/MinLOL12/Diorite"
+  },
+  "license": "MIT",
+  "icon": "assets/example/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.example.{{MOD_ID}}.ExampleMod"
+    ]
+  },
+  "mixins": [
+    "{{MOD_ID}}.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.96.0",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}

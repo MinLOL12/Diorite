@@ -1,0 +1,9 @@
+{
+  "id": "fabric-1.21.1",
+  "name": "Fabric 1.21.1",
+  "loader": "fabric",
+  "mc_version": "1.21.1",
+  "loader_version": "0.107.0",
+  "description": "Fabric mod template for Minecraft 1.21.1",
+  "java_version": 21
+}

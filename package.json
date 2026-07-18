@@ -1,0 +1,42 @@
+{
+  "name": "diorite",
+  "version": "0.1.0",
+  "description": "Diorite - Zero-setup Minecraft modding IDE. Like Cursor/Replit but for Minecraft Java. Eliminates JDK/Gradle/mappings/mod loader setup.",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "electron"
+  ],
+  "scripts": {
+    "dev:backend": "cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 7331 --reload",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:electron": "cd electron && npm install && npm run build",
+    "build": "npm run build:frontend && npm run build:electron",
+    "build:installer": "npm run build && cd installer && npx electron-builder --config electron-builder.yml",
+    "start": "cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 7331",
+    "test:backend": "cd backend && python -m pytest -q || python -c \"from app.services.template_service import TemplateService; print('Templates:', TemplateService().list_templates())\""
+  },
+  "keywords": [
+    "minecraft",
+    "modding",
+    "ide",
+    "fabric",
+    "neoforge",
+    "forge",
+    "gradle",
+    "java",
+    "cursor",
+    "replit"
+  ],
+  "author": "Diorite Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MinLOL12/Diorite.git"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

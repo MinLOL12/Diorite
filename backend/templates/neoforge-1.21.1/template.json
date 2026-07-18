@@ -1,0 +1,9 @@
+{
+  "id": "neoforge-1.21.1",
+  "name": "NeoForge 1.21.1",
+  "loader": "neoforge",
+  "mc_version": "1.21.1",
+  "loader_version": "21.1.0",
+  "description": "NeoForge mod template for Minecraft 1.21.1",
+  "java_version": 21
+}

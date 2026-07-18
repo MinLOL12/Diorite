@@ -1,0 +1,23 @@
+{
+  "name": "diorite-ide",
+  "version": "0.1.0",
+  "description": "Diorite - Zero-setup Minecraft modding IDE, like Cursor but for Minecraft Java",
+  "main": "dist/main.js",
+  "author": "MinLOL12 <302282839+MinLOL12@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --skipLibCheck || true",
+    "dev": "tsc --skipLibCheck || true && electron .",
+    "build:installer": "npm run build && electron-builder --config ../installer/electron-builder.yml",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "electron-is-dev": "^3.0.1"
+  },
+  "devDependencies": {
+    "electron": "^32.0.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.6.3",
+    "@types/node": "^20.14.0"
+  }
+}

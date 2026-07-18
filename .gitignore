@@ -1,0 +1,43 @@
+# Diorite caches
+.diorite/
+.cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv
+venv/
+node_modules/
+dist/
+build/
+out/
+*.log
+
+# Electron
+electron/dist/
+frontend/dist/
+dist/installer/
+*.exe
+*.AppImage
+*.dmg
+
+# Projects (user generated, not in repo)
+# Uncomment to ignore local user data dir override
+# /projects/
+
+# Gradle / Java
+.gradle/
+build/
+run/
+logs/
+out/
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
