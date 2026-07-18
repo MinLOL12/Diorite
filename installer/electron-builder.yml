@@ -1,0 +1,63 @@
+appId: com.diorite.ide
+productName: Diorite
+copyright: Copyright © 2026 Diorite
+
+directories:
+  output: ../dist/installer
+  buildResources: ../assets
+
+files:
+  - ../electron/dist/**/*
+  - ../frontend/dist/**/*
+  - ../backend/**/*
+  - !../backend/__pycache__/**/*
+  - !**/*.pyc
+  - ../assets/**/*
+  - package.json
+
+extraResources:
+  - from: ../backend
+    to: backend
+    filter:
+      - "**/*"
+  - from: ../frontend/dist
+    to: frontend/dist
+    filter:
+      - "**/*"
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: ../assets/icons/icon.ico
+  publisherName: Diorite Team
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Diorite IDE
+  installerIcon: ../assets/icons/icon.ico
+  uninstallerIcon: ../assets/icons/icon.ico
+  installerHeaderIcon: ../assets/icons/icon.ico
+  include: build/installer.nsh
+  artifactName: Diorite-Setup-${version}-${arch}.${ext}
+
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  icon: ../assets/icons/icon.png
+  category: public.app-category.developer-tools
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  icon: ../assets/icons/icon.png
+  category: Development
+
+publish: null
+
+# Auto updates disabled for now

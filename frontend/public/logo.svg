@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#151518"/>
+      <stop offset="100%" stop-color="#0e0e0f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a8f0c6"/>
+      <stop offset="100%" stop-color="#6ee7b7"/>
+    </linearGradient>
+    <pattern id="diorite" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="#f5f5f5"/>
+      <circle cx="8" cy="12" r="3" fill="#2a2a30"/>
+      <circle cx="22" cy="8" r="2" fill="#3a3a44"/>
+      <circle cx="30" cy="20" r="2.5" fill="#1a1a1f"/>
+      <circle cx="12" cy="28" r="2" fill="#2a2a30"/>
+      <circle cx="35" cy="33" r="3" fill="#0e0e0f"/>
+      <circle cx="5" cy="35" r="1.5" fill="#3a3a44"/>
+    </pattern>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+  <!-- D shape with diorite texture -->
+  <g transform="translate(96, 96)">
+    <rect x="0" y="0" width="320" height="320" rx="64" fill="url(#diorite)" />
+    <!-- D cutout effect -->
+    <path d="M 60 60 L 60 260 L 140 260 C 210 260 260 210 260 160 C 260 110 210 60 140 60 Z M 100 100 L 140 100 C 186 100 220 124 220 160 C 220 196 186 220 140 220 L 100 220 Z" fill="#0e0e0f" />
+    <!-- accent glow bottom right -->
+    <circle cx="240" cy="240" r="48" fill="url(#accent)" opacity="0.9"/>
+    <circle cx="240" cy="240" r="20" fill="#0e0e0f"/>
+  </g>
+  <!-- Subtle border -->
+  <rect x="1" y="1" width="510" height="510" rx="127" fill="none" stroke="#2a2a30" stroke-width="1" opacity="0.5"/>
+</svg>
