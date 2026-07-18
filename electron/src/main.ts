@@ -29,6 +29,19 @@ function getFrontendPath(): string {
   return path.join((process as any).resourcesPath, 'frontend', 'dist', 'index.html');
 }
 
+function findBundledBackend(backendRoot: string): string | null {
+  // Frozen single-exe backend produced by PyInstaller — zero-setup for users.
+  const exeName = process.platform === 'win32' ? 'diorite-backend.exe' : 'diorite-backend';
+  const candidates = [
+    path.join(backendRoot, exeName),                  // resources/backend/diorite-backend(.exe)
+    path.join(backendRoot, 'diorite-backend', exeName) // nested folder variant
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
 function startBackend(): ChildProcess | null {
   if (IS_DEV) {
     console.log('[Diorite] Dev mode: expecting backend at http://127.0.0.1:' + BACKEND_PORT);
@@ -36,34 +49,30 @@ function startBackend(): ChildProcess | null {
   }
 
   const backendRoot = getBackendPath();
-  const pythonExecutable = path.join(backendRoot, 'venv', 'Scripts', 'python.exe'); // Windows
-  const pythonExecutableUnix = path.join(backendRoot, 'venv', 'bin', 'python');
+  let cmd: string;
+  let args: string[];
 
-  let pythonPath = process.platform === 'win32' ? pythonExecutable : pythonExecutableUnix;
-
-  // Fallback to system python if venv not found
-  if (!fs.existsSync(pythonPath)) {
-    pythonPath = 'python';
+  const bundledExe = findBundledBackend(backendRoot);
+  if (bundledExe) {
+    // Normal case: self-contained exe, nothing else needed on the machine.
+    cmd = bundledExe;
+    args = [];
+    console.log(`[Diorite] Starting bundled backend: ${bundledExe}`);
+  } else {
+    // Fallback for source checkouts packaged without PyInstaller: system python.
+    cmd = 'python';
+    args = ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', BACKEND_PORT];
+    console.log('[Diorite] Bundled backend not found, falling back to system python');
   }
 
-  // Backend entry
-  const backendMain = path.join(backendRoot, 'app', 'main.py');
-  const cwd = backendRoot;
-
-  console.log(`[Diorite] Starting backend: ${pythonPath} -m uvicorn app.main:app --host 127.0.0.1 --port ${BACKEND_PORT}`);
-
-  // If we bundled with python -m app.main or uvicorn
-  const args = fs.existsSync(backendMain)
-    ? ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', BACKEND_PORT]
-    : ['-m', 'app.main'];
-
-  const proc = spawn(pythonPath, args, {
-    cwd,
+  const proc = spawn(cmd, args, {
+    cwd: backendRoot,
     env: {
       ...process.env,
       DIORITE_PORT: BACKEND_PORT,
       PYTHONUNBUFFERED: '1'
     },
+    windowsHide: true, // no console window flashes on Windows
     stdio: ['ignore', 'pipe', 'pipe']
   });
 

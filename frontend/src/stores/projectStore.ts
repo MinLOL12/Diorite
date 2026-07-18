@@ -28,5 +28,5 @@ export const useProjectStore = create<ProjectState>((set) => ({
     else localStorage.removeItem('diorite_current_project');
     set({ currentProjectId: id });
   },
-  setCurrentProject: (currentProject) => set({ currentProject }),
+  setCurrentProject: (currentProject: Project | null) => set({ currentProject }),
 }));
