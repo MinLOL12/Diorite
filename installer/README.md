@@ -5,11 +5,11 @@ by hand; use one of these instead:
 
 ## Build the EXE (pick ONE)
 
-|Way|How|Needs|
+| Way | How | Needs |
 |---|---|---|
-|**GitHub button** (easiest — nothing installed)|One-time: copy `workflows/build-installer.yml` (this folder) to `.github/workflows/` and push. Then Repo → Actions → *Build Installer* → Run → download `Diorite-Setup-Windows` artifact|nothing|
-|**Double-click**|`Build-Diorite-Installer.bat` (repo root)|Node 20+, Python 3.11+|
-|**Terminal**|`npm run make:exe`|Node 20+, Python 3.11+|
+| **GitHub — No install (easiest)** | Repo → **Actions** tab → *Build Installer* → **Run workflow** → wait → download `Diorite-Setup-Windows` artifact. If you fork, enable Actions first. Tag push `v*` auto-creates Release with EXE. The workflow file lives at `.github/workflows/build-installer.yml` (this folder's `workflows/build-installer.yml` is a mirror/reference). | nothing |
+| **Double-click** | `Build-Diorite-Installer.bat` (repo root) | Node 20+, Python 3.11+ |
+| **Terminal** | `npm run make:exe` | Node 20+, Python 3.11+ |
 
 Output: `dist/installer/Diorite-Setup-<version>-x64.exe`
 

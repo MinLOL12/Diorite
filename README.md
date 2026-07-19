@@ -99,11 +99,11 @@ Generates Java files, JSON models, blockstates, registrations — convenience on
 
 | Way | How | What you need installed |
 |-----|-----|-------------------------|
-| **GitHub button** (easiest) | One-time: copy `installer/workflows/build-installer.yml` to `.github/workflows/` and push. Then: Repo → **Actions** → *Build Installer* → **Run workflow** → download `Diorite-Setup-Windows` from Artifacts | **Nothing** |
+| **GitHub — No install (easiest)** | Go to your repo on GitHub → **Actions** tab → **Build Installer** → **Run workflow** → wait ~5 min → download `Diorite-Setup-Windows` artifact. (On a fork, click *Enable workflows* first. Pushing a tag like `v1.0.0` auto-publishes the EXE to Releases.) | **Nothing** |
 | **Double-click** | `Build-Diorite-Installer.bat` (repo root) | Node 20+, Python 3.11+ |
-| **Terminal** | `npm run make:exe` | Node 20+, Python 3.11+ |
+| **Terminal** | `npm run make:exe` or `npm run build:installer` | Node 20+, Python 3.11+ |
 
-Output: `dist/installer/Diorite-Setup-<version>-x64.exe` — that ONE file is all you ever share. Push a tag like `v1.0.0` and GitHub automatically attaches it to a Release.
+Output: `dist/installer/Diorite-Setup-<version>-x64.exe` — that ONE file is all you ever share. The EXE is built by GitHub Actions from `.github/workflows/build-installer.yml` (mirrored at `installer/workflows/build-installer.yml` for reference). Push a tag like `v1.0.0` and GitHub automatically attaches it to a Release.
 
 ### What a user does with it — two double-clicks, zero tools
 
@@ -175,10 +175,11 @@ Diorite/
 │  └─ package.json
 ├─ installer/electron-builder.yml (ONE-CLICK NSIS EXE, DMG, AppImage)
 ├─ assets/{logo.svg, logo.png, icons/{icon.png, icon.ico, icon-256.png}}
+├─ .github/workflows/build-installer.yml (cloud build — no local install needed → Actions → Run → EXE)
 ├─ scripts/{build-installer.js, run-dev.js, install.bat, install.sh}
 ├─ Build-Diorite-Installer.bat (ONE double-click → EXE)
 ├─ build-installer.sh (macOS/Linux equivalent)
-├─ installer/workflows/build-installer.yml (copy to .github/workflows/ → cloud build, EXE as download)
+├─ installer/{electron-builder.yml, workflows/build-installer.yml (mirror), README.md}
 └─ README.md
 ```
 
