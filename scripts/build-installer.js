@@ -41,16 +41,21 @@ function banner(msg) {
 }
 function run(cmd, args, cwd, { optional = false } = {}) {
   log(`$ ${cmd} ${args.join(' ')}  (in ${path.relative(root, cwd) || '.'})`);
-  const res = spawnSync(cmd, args, { stdio: 'inherit', cwd, shell: false });
-  if (res.error && res.error.code === 'ENOENT') {
-    fail(`"${cmd}" is not installed or not on PATH. Make sure it is installed and try again.`);
+  // On Windows, we use shell: true to properly resolve .cmd/.bat files like npm
+  const res = spawnSync(cmd, args, { stdio: 'inherit', cwd, shell: IS_WIN });
+  if (res.error) {
+    if (res.error.code === 'ENOENT') {
+      fail(`"${cmd}" is not installed or not on PATH. Make sure it is installed and try again.`);
+    }
+    fail(`Failed to start command "${cmd}": ${res.error.message}`);
   }
   if (res.status !== 0) {
     if (optional) {
       log('(step failed but is optional — continuing)');
       return;
     }
-    fail(`command failed with exit code ${res.status}. See output above.`);
+    const statusMsg = res.status === null ? `signal ${res.signal}` : `exit code ${res.status}`;
+    fail(`command failed with ${statusMsg}. See output above.`);
   }
 }
 function fail(msg) {
@@ -87,7 +92,7 @@ function main() {
 
   let py = null;
   for (const candidate of ['python', 'python3', 'py']) {
-    const res = spawnSync(candidate, ['--version'], { stdio: 'ignore', shell: false });
+    const res = spawnSync(candidate, ['--version'], { stdio: 'ignore', shell: IS_WIN });
     if (res.status === 0) { py = candidate; break; }
   }
   if (!py) {
@@ -117,8 +122,20 @@ function main() {
 
   // ---------- Step 2: freeze the backend into ONE exe ----------
   banner('Freezing backend into a standalone exe (no Python needed for users)');
-  run(py, ['-m', 'pip', 'install', '-q', '-r', 'requirements.txt'], path.join(root, 'backend'));
-  run(py, ['-m', 'pip', 'install', '-q', 'pyinstaller'], path.join(root, 'backend'));
+  
+  const pipInstall = (args) => {
+    const fullArgs = ['-m', 'pip', 'install', '-q', ...args];
+    log(`$ ${py} ${fullArgs.join(' ')}`);
+    const res = spawnSync(py, fullArgs, { stdio: 'inherit', cwd: path.join(root, 'backend'), shell: IS_WIN });
+    if (res.status !== 0) {
+      log('Pip install failed, trying with --break-system-packages...');
+      run(py, [...fullArgs, '--break-system-packages'], path.join(root, 'backend'));
+    }
+  };
+
+  pipInstall(['-r', 'requirements.txt']);
+  pipInstall(['pyinstaller']);
+  
   run(py, ['-m', 'PyInstaller', 'diorite-backend.spec', '--clean', '--noconfirm'], path.join(root, 'backend'));
 
   const backendExe = path.join(
